@@ -5,16 +5,22 @@ const DELETE_AFTER_SECONDS = 10;
 
 const client = new Client({
   authStrategy: new LocalAuth(),
-  puppeteer: { headless: true }
+  puppeteer: {
+    headless: true,
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox'
+    ]
+  }
 });
 
 client.on('qr', qr => {
-  qrcode.generate(qr, { small: true,scale:1 });
+  qrcode.generate(qr, { small: true });
   console.log('Scanne le QR code avec ton WhatsApp mobile.');
 });
 
 client.on('ready', () => {
-  console.log('Bot connecté à WhatsApp !');
+  console.log('✅ Bot connecté à WhatsApp !');
 });
 
 client.on('message_create', async msg => {
@@ -26,12 +32,13 @@ client.on('message_create', async msg => {
   setTimeout(async () => {
     try {
       await msg.delete(true);
-      console.log('Message supprimé pour tout le monde');
+      console.log('🗑️ Message supprimé pour tout le monde');
     } catch (error) {
-      console.log('Suppression pour tous impossible, suppression locale');
+      console.log('⚠️ Suppression globale impossible, suppression locale');
       await msg.delete(false);
     }
   }, DELETE_AFTER_SECONDS * 1000);
 });
 
 client.initialize();
+
