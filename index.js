@@ -1,5 +1,6 @@
 const { Client, LocalAuth } = require('whatsapp-web.js');
-const qrcode = require('qrcode-terminal');
+const QRCode = require('qrcode');
+const fs = require('fs');
 
 const DELETE_AFTER_SECONDS = 10;
 
@@ -7,16 +8,13 @@ const client = new Client({
   authStrategy: new LocalAuth(),
   puppeteer: {
     headless: true,
-    args: [
-      '--no-sandbox',
-      '--disable-setuid-sandbox'
-    ]
+    args: ['--no-sandbox', '--disable-setuid-sandbox']
   }
 });
 
-client.on('qr', qr => {
-  qrcode.generate(qr, { small: true });
-  console.log('Scanne le QR code avec ton WhatsApp mobile.');
+client.on('qr', async qr => {
+  await QRCode.toFile('qr.png', qr);
+  console.log('📸 QR code généré : télécharge qr.png et scanne-le');
 });
 
 client.on('ready', () => {
@@ -33,8 +31,7 @@ client.on('message_create', async msg => {
     try {
       await msg.delete(true);
       console.log('🗑️ Message supprimé pour tout le monde');
-    } catch (error) {
-      console.log('⚠️ Suppression globale impossible, suppression locale');
+    } catch (e) {
       await msg.delete(false);
     }
   }, DELETE_AFTER_SECONDS * 1000);
