@@ -2,6 +2,17 @@
   "name": "whatsapp-delete-bot",
   "version": "1.0.0",
   "description": "Bot WhatsApp suppression automatique",
+  "homepage": "https://github.com/LeudjeuNjiatcha-YanisAel/Whatsapp-Bot#readme",
+  "bugs": {
+    "url": "https://github.com/LeudjeuNjiatcha-YanisAel/Whatsapp-Bot/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LeudjeuNjiatcha-YanisAel/Whatsapp-Bot.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"

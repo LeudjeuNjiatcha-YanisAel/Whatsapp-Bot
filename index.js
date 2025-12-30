@@ -1,6 +1,5 @@
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const QRCode = require('qrcode');
-const fs = require('fs');
 
 const DELETE_AFTER_SECONDS = 10;
 
@@ -14,11 +13,11 @@ const client = new Client({
 
 client.on('qr', async qr => {
   await QRCode.toFile('qr.png', qr);
-  console.log('📸 QR code généré : télécharge qr.png et scanne-le');
+  console.log('QR généré → ouvre le fichier qr.png et scanne-le');
 });
 
 client.on('ready', () => {
-  console.log('✅ Bot connecté à WhatsApp !');
+  console.log('Bot connecté à WhatsApp !');
 });
 
 client.on('message_create', async msg => {
@@ -30,12 +29,12 @@ client.on('message_create', async msg => {
   setTimeout(async () => {
     try {
       await msg.delete(true);
-      console.log('🗑️ Message supprimé pour tout le monde');
-    } catch (e) {
+      console.log('Message supprimé pour tout le monde');
+    } catch (error) {
+      console.log('Suppression globale impossible, suppression locale');
       await msg.delete(false);
     }
   }, DELETE_AFTER_SECONDS * 1000);
 });
 
 client.initialize();
-
