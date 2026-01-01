@@ -1,40 +1,44 @@
 const { Client, LocalAuth } = require('whatsapp-web.js');
-const QRCode = require('qrcode');
+const qrcode = require('qrcode-terminal');
 
-const DELETE_AFTER_SECONDS = 10;
+const DELETE_AFTER_MS = 10_000;
 
 const client = new Client({
   authStrategy: new LocalAuth(),
   puppeteer: {
     headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox']
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-gpu'
+    ]
   }
 });
 
-client.on('qr', async qr => {
-  await QRCode.toFile('qr.png', qr);
-  console.log('QR généré → ouvre le fichier qr.png et scanne-le');
+client.on('qr', qr => {
+  qrcode.generate(qr, { small: true });
+  console.log('📱 Scanne le QR code');
 });
 
 client.on('ready', () => {
-  console.log('Bot connecté à WhatsApp !');
+  console.log('✅ Bot WhatsApp connecté');
 });
 
-client.on('message_create', async msg => {
+/**
+ * Suppression ultra rapide
+ */
+client.on('message_create', msg => {
   if (!msg.fromMe) return;
+  if (!msg.from || !msg.from.endsWith('@g.us')) return;
+  if (msg.hasMedia) return;
 
-  const chat = await msg.getChat();
-  if (!chat.isGroup) return;
-
-  setTimeout(async () => {
-    try {
-      await msg.delete(true);
-      console.log('Message supprimé pour tout le monde');
-    } catch (error) {
-      console.log('Suppression globale impossible, suppression locale');
-      await msg.delete(false);
-    }
-  }, DELETE_AFTER_SECONDS * 1000);
+  setTimeout(() => {
+    msg.delete(true)
+      .catch(() => msg.delete(false))
+      .catch(() => {});
+  }, DELETE_AFTER_MS);
 });
 
 client.initialize();
+
