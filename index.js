@@ -8,7 +8,7 @@ const {
 const qrcode = require('qrcode-terminal');
 const Pino = require('pino');
 
-const DELETE_AFTER_SECONDS = 5;
+const DELETE_AFTER_SECONDS = 10;
 let sock;
 let isStarting = false;
 
