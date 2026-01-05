@@ -1,3 +1,6 @@
+const express = require("express");
+const app = express();
+
 const {
   default: makeWASocket,
   useMultiFileAuthState,
@@ -12,6 +15,22 @@ const DELETE_AFTER_SECONDS = 10;
 let sock;
 let isStarting = false;
 
+/* ===============================
+   🌐 SERVEUR HTTP POUR RENDER
+================================ */
+const PORT = process.env.PORT || 3000;
+
+app.get("/", (req, res) => {
+  res.send("🤖 Bot WhatsApp actif sur Render");
+});
+
+app.listen(PORT, () => {
+  console.log(`🌍 Serveur web lancé sur le port ${PORT}`);
+});
+
+/* ===============================
+   🤖 BOT WHATSAPP
+================================ */
 async function startBot() {
   if (isStarting) return;
   isStarting = true;
@@ -73,4 +92,3 @@ async function startBot() {
 }
 
 startBot();
-
